@@ -33,31 +33,45 @@ export default {
     // 使用ref获取
     //1. new BScroll(指定挂载,对象要求)
     this.scroll = new BScroll(this.$refs.wrapper, {
-     
       click: true, // div的点击需要加这个属性
       probeType: this.probeType, // 监听位置
       pullUpLoad: this.pullUpLoad, // 上拉
       //   observeDOM: true, //这个如果不设置，滚动条会失效
     });
     // 2.监听滚动的位置
-    this.scroll.on("scroll", (position) => {
-      // console.log(position);
-      this.$emit("scroll", position);
-    });
-    // 3.监听scroll滚动到底部 上拉加载更多
-    this.scroll.on("pullingUp", () => {
-      // console.log('上拉');
-      this.$emit("pullingUp");
-    });
+    if (this.probeType === 2 || this.probeType === 3) {
+      this.scroll.on("scroll", (position) => {
+        // console.log(position);
+        this.$emit("scroll", position);
+      });
+    }
+    // console.log(this.scroll);
+
+    // 3.监听scroll滚动到底部
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        // console.log('监听到滚动到底部');
+        this.$emit("pullingUp");
+      });
+    }
   },
   methods: {
     // 点击回到某个位置
     scrollTo(x, y, time = 300) {
-      this.scroll.scrollTo(x, y, time);
+      this.scroll && this.scroll.scrollTo(x, y, time);
     },
-    // 完成上拉加载
+    // 刷新
+    refresh() {
+      this.scroll && this.scroll.refresh();
+      // console.log("----");
+    },
+    // 完成上拉加载更多
     finishPullUp() {
-      this.scroll.finishPullUp();
+      this.scroll && this.scroll.finishPullUp();
+    },
+    // 获取位置y 记录离开位置
+    getScrollY() {
+      return this.scroll ? this.scroll.y : 0;
     },
   },
 };

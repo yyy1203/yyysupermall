@@ -1,6 +1,7 @@
 <template>
   <div class="goods-item">
-      <img :src="goodsItem.show.img" alt="">
+    <!-- @load 监听图片加载完成 -->
+      <img :src="goodsItem.show.img" alt="" @load="imageLoad">
       <div class="goods-info">
           <p>{{goodsItem.title}}</p>
           <span class="price">{{goodsItem.price}}</span>
@@ -19,7 +20,15 @@ export default {
                 return {}
             }
         }
-    }
+    },
+    methods: {
+      imageLoad(){
+        // console.log('imgload');
+        // GoodsListItem->Home 非父子组件通信，使用事件总线$bus
+        // console.log(this.$bus); // 本身没有这个东西，要去Vue原型里面加
+        this.$bus.$emit('itemImageLoad')
+      }
+    },
 }
 </script>
 
