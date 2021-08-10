@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <!-- @load 监听图片加载完成 -->
       <img :src="goodsItem.show.img" alt="" @load="imageLoad">
       <div class="goods-info">
@@ -27,6 +27,12 @@ export default {
         // GoodsListItem->Home 非父子组件通信，使用事件总线$bus
         // console.log(this.$bus); // 本身没有这个东西，要去Vue原型里面加
         this.$bus.$emit('itemImageLoad')
+      },
+      // 点击跳转到详情页
+      itemClick(){
+        // console.log('itemClick');
+        // console.log(this.goodsItem.iid);
+        this.$router.push('/detail/'+this.goodsItem.iid)
       }
     },
 }
