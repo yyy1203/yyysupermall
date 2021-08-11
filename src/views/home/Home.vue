@@ -7,7 +7,8 @@
       class="tab-control"
       @tabClick="tabClick"
       ref="tabControl1"
-      v-show="isTabFixed" />
+      v-show="isTabFixed"
+    />
     <!-- better-scroll滚动scroll -->
     <Scroll
       class="content"
@@ -18,9 +19,7 @@
       @pullingUp="loadMore"
     >
       <!-- 轮播图homeswiper -->
-      <HomeSwiper
-        :banners="banners"
-        @swiperImageLoad="swiperImageLoad" />
+      <HomeSwiper :banners="banners" @swiperImageLoad="swiperImageLoad" />
       <RecommendView :recommends="recommends" />
       <!-- 本周流行 -->
       <FeatureView />
@@ -28,7 +27,8 @@
       <TabControl
         :titles="['流行', '新款', '精选']"
         @tabClick="tabClick"
-        ref="tabControl2" />
+        ref="tabControl2"
+      />
 
       <GoodsList :goods="showGoods" />
     </Scroll>
@@ -50,7 +50,8 @@ import Scroll from "components/common/scroll/Scroll";
 import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import { debounce } from "common/utils";
+
+import {itemListenerMixin} from 'common/mixin'
 export default {
   name: "Home",
   components: {
@@ -63,6 +64,7 @@ export default {
     Scroll,
     BackTop,
   },
+  mixins:[itemListenerMixin],
   data() {
     return {
       banners: [], // 轮播
@@ -77,7 +79,7 @@ export default {
       isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
-      saveY:0 // 记录离开的位置
+      saveY: 0, // 记录离开的位置
     };
   },
   computed: {
@@ -86,18 +88,21 @@ export default {
     },
   },
   destroyed() {
-    console.log('home destoryed');
+    console.log("home destoryed");
   },
   // 这两个在有keep-live的时候才能用
   activated() {
-    this.$refs.scroll.scrollTo(0,this.saveY,0)
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
     // 最好刷新一下 以防出现不能滚动的bug
-    this.$refs.scroll.refresh()
+    this.$refs.scroll.refresh();
   },
   deactivated() {
-    // 保存离开home时的位置
-    this.saveY = this.$refs.scroll.getScrollY()
+    // 1. 保存离开home时的位置
+    this.saveY = this.$refs.scroll.getScrollY();
     // console.log(this.saveY);
+
+    // 2.取消全局事件的监听，这里的第二个参数(on对应的第二个参数)必须要传，不然这个全局事件全部取消
+    this.$bus.$off('itemImageLoad',this.itemImgListener)
   },
   created() {
     // 1.请求多个数据
@@ -109,11 +114,7 @@ export default {
     this.getHomeGoods("sell");
   },
   mounted() {
-    // 监听item中的图片加载完成
-    const refresh = debounce(this.$refs.scroll.refresh, 50);
-    this.$bus.$on("itemImageLoad", () => {
-      refresh();
-    });
+
     // 获取tabControl的offsetTop
     // 组件没有offsetTop-> 所有的组件都有一个属性$el:用于获取组件中的元素
     // console.log(this.$refs.tabControl.$el.offsetTop);

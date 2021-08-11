@@ -47,6 +47,7 @@
 
 <style scoped>
   .goods-info {
+    position: relative;
     padding: 20px 0;
     border-bottom: 5px solid #f2f5f8;
   }
