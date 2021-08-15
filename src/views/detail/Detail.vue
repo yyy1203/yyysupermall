@@ -15,10 +15,10 @@
       <DetailCommentInfo :comment-info="commentInfo" ref="comment" />
       <GoodsList :goods="recommends" ref="recommend" />
     </Scroll>
-    <DetailBottomBar />
+    <DetailBottomBar @addToCart="addToCart"/>
 
     <BackTop @click.native="backClick" v-show="isShowBackTop" />
-
+    <!-- <Toast :message="message" v-show="show"/> -->
   </div>
 </template>
 
@@ -48,6 +48,11 @@ import {
 } from "network/detail";
 
 import { itemListenerMixin } from "common/mixin";
+
+import {mapActions} from 'vuex'
+
+// import Toast from 'components/common/toast/Toast'
+
 export default {
   name: "Detail",
   components: {
@@ -61,7 +66,9 @@ export default {
     DetailBottomBar,
     Scroll,
     GoodsList,
-    BackTop
+    BackTop,
+    // Toast
+  
   },
   mixins: [itemListenerMixin],
 
@@ -80,6 +87,10 @@ export default {
       currentIndex: 0, // 当前滚动到第几个主题
       isShowBackTop: false,
 
+      // toast相关
+      // message:'',
+      // show:false
+
     };
   },
   created() {
@@ -87,7 +98,7 @@ export default {
     this.iid = this.$route.params.iid;
     // 2.根据iid请求详情数据
     getDetail(this.iid).then((res) => {
-      // console.log(res);
+      console.log(res);
       const data = res.result;
       // 1.获取顶部的图片轮播数据
       this.topImages = data.itemInfo.topImages;
@@ -138,6 +149,7 @@ export default {
     this.$bus.$off("itemImageLoad", this.itemImgListener);
   },
   methods: {
+    ...mapActions(['addCart']),
     imageLoad() {
       this.$refs.scroll.refresh();
       // 获取4个主题的offsetTop
@@ -200,6 +212,33 @@ export default {
     backClick() {
       this.$refs.scroll.scrollTo(0, 0);
     },
+    // 加入购物车
+    addToCart(){
+      // 1.获取购物车需要展示的信息
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.iid = this.iid;
+      // 2.将商品添加到购物车里面
+      // this.$store.commit('addCart',product)
+      // this.$store.dispatch('addCart',product).then(res=>{
+      //   console.log(res);
+      // })
+      this.addCart(product).then(res=>{
+        console.log(res);
+        // this.show = true;
+        // this.message = res
+
+        // setTimeout(() => {
+        //   this.show = false;
+        //   this.message=''
+        // }, 1500);
+
+        this.$toast.show()
+      })
+    }
   },
 };
 </script>

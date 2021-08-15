@@ -1,8 +1,11 @@
 <template>
-<!-- 外面必须套一个标签 -->
-  <div class="wrapper">
-    <!-- 里面也得是一个标签 -->
-    <ul class="content">
+  <div>
+    <h2>分类</h2>
+  </div>
+  <!-- 外面必须套一个标签 -->
+  <!-- <div class="wrapper"> -->
+  <!-- 里面也得是一个标签 -->
+  <!-- <ul class="content">
       <li>列表1</li>
       <li>列表2</li>
       <li>列表3</li>
@@ -103,26 +106,26 @@
       <li>列表98</li>
       <li>列表99</li>
       <li>列表100</li>
-    </ul>
-  </div>
+    </ul> -->
+  <!-- </div> -->
 </template>
 
 <script>
-import BScroll from 'better-scroll'
-  export default {
-    name: "Category",
-    // 不能在created里面使用
-    // 组件创建完后调用 created() 还没有挂载，拿不到dom 要使用mounted
-    mounted() {
-      new BScroll(document.querySelector('.wrapper'))
-    },
-  }
+import BScroll from "better-scroll";
+export default {
+  name: "Category",
+  // 不能在created里面使用
+  // 组件创建完后调用 created() 还没有挂载，拿不到dom 要使用mounted
+  mounted() {
+    new BScroll(document.querySelector(".wrapper"));
+  },
+};
 </script>
 
 <style scoped>
-  .wrapper{
-     height: 150px;
-    background-color: red;
-    overflow: hidden;
-  }
+.wrapper {
+  height: 150px;
+  background-color: red;
+  overflow: hidden;
+}
 </style>
